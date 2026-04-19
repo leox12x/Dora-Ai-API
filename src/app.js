@@ -42,7 +42,7 @@ async function start() {
     console.log(`Tools loaded: ${toolRegistry.list().join(', ')}`);
 
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.DB);
     console.log('Connected to MongoDB');
 
     // Start server

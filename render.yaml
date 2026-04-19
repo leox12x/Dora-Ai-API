@@ -1,14 +1,38 @@
+# render.yaml - Dora API on Render
+# Deploy: render deploy --yaml
+
 services:
   - type: web
     name: dora-api
     env: node
     region: oregon
+    plan: free
+
+    # Build settings
     buildCommand: npm install
     startCommand: npm start
+
+    # Health check (REQUIRED for free tier)
+    healthCheckPath: /health
+
+    # Auto-sleep prevention - Render wakes on any HTTP request
+    numInstances: 1
+
+    # Environment variables
     envVars:
       - key: NODE_ENV
         value: production
+
+      - key: PORT
+        value: 10000
+
+      # Set these in Render Dashboard (Sync: false = secret)
       - key: GROQ_API_KEY
         sync: false
+
       - key: MONGODB_URI
         sync: false
+
+      # Optional: increase timeout for AI calls
+      - key: TIMEOUT_MS
+        value: 25000
