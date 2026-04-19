@@ -1,0 +1,7 @@
+// Placeholder for dynamic skills
+// Skills loaded here will be automatically registered
+
+// Example skill:
+// module.exports = async function(params) {
+//   return { result: 'Hello from skill!' };
+// };
