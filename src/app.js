@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const chatRoutes = require('./routes/chat');
 const toolRoutes = require('./routes/tools');
+const config = require('./config');
 
 const app = express();
 
@@ -22,7 +23,12 @@ app.use('/tools', toolRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    aiProvider: config.activeProvider,
+    availableProviders: config.getAvailableProviders()
+  });
 });
 
 // Error handler
@@ -32,7 +38,6 @@ app.use((err, req, res, next) => {
 });
 
 // Connect to MongoDB, load tools, and start server
-const PORT = process.env.PORT || 3000;
 const toolRegistry = require('./services/toolRegistry');
 
 async function start() {
@@ -41,13 +46,16 @@ async function start() {
     await toolRegistry.loadTools();
     console.log(`Tools loaded: ${toolRegistry.list().join(', ')}`);
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+    // Connect to MongoDB using config
+    await mongoose.connect(config.mongodb.uri);
     console.log('Connected to MongoDB');
 
-    // Start server
+    // Start server using config
+    const PORT = config.server.port;
     app.listen(PORT, () => {
       console.log(`Dora API running on port ${PORT}`);
+      console.log(`AI Provider: ${config.activeProvider}`);
+      console.log(`Available: ${config.getAvailableProviders().join(', ')}`);
     });
   } catch (err) {
     console.error('Startup error:', err);

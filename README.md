@@ -4,7 +4,7 @@ Lightweight AI Agent API with memory and tools. Built by **Rahaman Leon**.
 
 ## Features
 
-- Chat with AI (Groq integration)
+- Chat with AI (Groq, OpenAI, OpenRouter, HuggingFace, Ollama)
 - Persistent memory (MongoDB)
 - Tool system (web search, URL fetch, image generation)
 - Dynamic skill loading
@@ -15,40 +15,52 @@ Lightweight AI Agent API with memory and tools. Built by **Rahaman Leon**.
 ### 1. Clone and Install
 
 ```bash
-git clone <your-repo>
-cd dora-api
+git clone https://github.com/rahamanleon/Dora-Ai-API.git
+cd Dora-Ai-API
 npm install
 ```
 
-### 2. Configure Environment
+### 2. Configure
 
 ```bash
-cp .env.example .env
+cp config.example.json config.json
 ```
 
-Edit `.env`:
-```
-GROQ_API_KEY=your_key_here
-MONGODB_URI=mongodb://localhost:27017/dora
-PORT=3000
+Edit `config.json` with your API keys:
+
+```json
+{
+  "aiProviders": {
+    "groq": {
+      "apiKey": "YOUR_GROQ_API_KEY"
+    }
+  },
+  "activeProvider": "groq",
+  "database": {
+    "mongodb": "mongodb://localhost:27017/dora"
+  }
+}
 ```
 
-### 3. Get Groq API Key
+### 3. Get API Keys
 
-Sign up at https://console.groq.com/ and get a free API key.
+**Groq (Free tier)** - https://console.groq.com/
+**OpenAI** - https://platform.openai.com/
+**OpenRouter (Free models)** - https://openrouter.ai/
+**Ollama (Local)** - https://ollama.com/
 
 ### 4. MongoDB Setup
 
-**Option A: Local MongoDB**
+**Local:**
 ```bash
 mongod
 ```
 
-**Option B: MongoDB Atlas (Free Tier)**
-1. Create account at https://www.mongodb.com/atlas
+**Atlas (Cloud - Free):**
+1. Create account: https://www.mongodb.com/atlas
 2. Create free cluster
 3. Get connection string
-4. Update MONGODB_URI
+4. Update config.json
 
 ### 5. Run
 
@@ -72,102 +84,38 @@ Content-Type: application/json
 }
 ```
 
-Response:
-```json
-{
-  "reply": "Hello! I can help you...",
-  "actions": [],
-  "memory_update": []
-}
-```
-
 ### Memory
 
 ```bash
-# Get memory
 GET /chat/memory?user_id=user123
-
-# Save memory
-POST /chat/memory
-{
-  "user_id": "user123",
-  "key": "preference",
-  "value": "likes coffee"
-}
-
-# Delete memory
+POST /chat/memory (body: user_id, key, value)
 DELETE /chat/memory?user_id=user123&key=preference
-
-# Get conversation history
 GET /chat/history?user_id=user123
 ```
 
 ### Tools
 
 ```bash
-# List available tools
 GET /tools
-
-# Execute tool directly
-POST /tools/execute
-{
-  "user_id": "user123",
-  "tool_name": "webSearch",
-  "params": { "query": "weather today" }
-}
-
-# Load dynamic skill
-POST /tools/skill
-{
-  "name": "mySkill",
-  "code": "async function(params) { return { result: 'Hello!' }; }"
-}
-```
-
-## Response Format
-
-All chat responses follow this format:
-
-```json
-{
-  "reply": "The AI's response text",
-  "actions": [
-    { "type": "webSearch", "result": {...} }
-  ],
-  "memory_update": [
-    { "key": "user_name", "value": "John" }
-  ]
-}
+POST /tools/execute (body: user_id, tool_name, params)
+POST /tools/skill (body: name, code)
 ```
 
 ## Deploy to Render
 
-### 1. Create Render Account
-https://render.com
-
-### 2. Create Web Service
-
-- Connect GitHub repository
-- Build Command: `npm install`
-- Start Command: `npm start`
-
-### 3. Add Environment Variables
-
-In Render dashboard, add:
-- `GROQ_API_KEY`
-- `MONGODB_URI` (use MongoDB Atlas)
-- `NODE_ENV=production`
-
-### 4. Set Port
-
-Render sets `PORT` env variable automatically.
+1. Push to GitHub
+2. Create Web Service on Render
+3. Build: `npm install`
+4. Start: `npm start`
+5. Add environment variable: `CONFIG_JSON` (paste your config.json content)
 
 ## Project Structure
 
 ```
-dora-api/
+Dora-Ai-API/
 ├── src/
 │   ├── app.js           # Main entry
+│   ├── config.js        # Config loader
 │   ├── controllers/     # Route handlers
 │   ├── routes/          # API routes
 │   ├── services/        # Business logic
@@ -175,33 +123,11 @@ dora-api/
 │   ├── tools/           # Base tools
 │   ├── skills/          # Dynamic skills
 │   └── utils/           # Utilities
-├── .env
-├── .env.example
+├── config.example.json  # Example config
+├── config.json          # Your config (gitignored)
 ├── package.json
 └── README.md
 ```
-
-## Available Tools
-
-| Tool | Description |
-|------|-------------|
-| webSearch | Search the web (DuckDuckGo) |
-| fetchUrl | Fetch and parse web pages |
-| generateImage | Generate images (placeholder) |
-
-## Dynamic Skills
-
-Add custom skills dynamically:
-
-```javascript
-POST /tools/skill
-{
-  "name": "calculator",
-  "code": "async function(params) { return { result: eval(params.expr) }; }"
-}
-```
-
-Then use it in chat or execute directly.
 
 ## License
 

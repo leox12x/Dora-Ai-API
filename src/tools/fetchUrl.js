@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const config = require('../config');
 
 async function fetchUrl(url) {
   try {
@@ -8,7 +9,7 @@ async function fetchUrl(url) {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         'Accept': 'text/html,application/xhtml+xml'
       },
-      timeout: 15000
+      timeout: config.tools.fetchUrl.timeout
     });
 
     const $ = cheerio.load(response.data);
@@ -31,7 +32,7 @@ async function fetchUrl(url) {
     return {
       success: true,
       title,
-      content: content.substring(0, 3000),
+      content: content.substring(0, config.tools.fetchUrl.maxChars),
       url
     };
   } catch (error) {
