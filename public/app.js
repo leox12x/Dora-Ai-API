@@ -3,7 +3,7 @@
  * Clean, modern interface with real-time messaging
  */
 
-const DORA_API = window.DORA_API || 'http://localhost:3000';
+const DORA_API = window.DORA_API || 'https://dora-ai-api.onrender.com';
 
 // DOM Elements
 let chatMessages, messageInput, sendBtn, clearBtn, statusIndicator, typingIndicator;
