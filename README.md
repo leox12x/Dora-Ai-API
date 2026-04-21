@@ -132,3 +132,19 @@ Dora-Ai-API/
 ## License
 
 MIT - Rahaman Leon
+
+## WhatsApp Integration
+
+The `dora.js` file is a command module for [GoatBot v2](https://github.com/VectorGoat/GoatBot) WhatsApp bot.
+
+**Features:**
+- Chat with Dora AI via `/dora <question>`
+- Supports reply chain (reply to Dora's response for context)
+- Typing indicator while processing
+- Error handling with user-friendly messages
+- Bilingual (English + Bengali)
+
+**Usage:**
+1. Copy `dora.js` to your GoatBot commands folder
+2. Make sure `DORA_API_URL` points to your Dora API server
+3. Restart GoatBot
